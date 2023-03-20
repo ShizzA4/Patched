@@ -22,6 +22,20 @@ function clipboardAutoCollect()
 end
 coroutine.wrap(clipboardAutoCollect)()
 
+function brightFlash()
+	game:GetService("RunService").Heartbeat:Connect(function()
+		pcall(function()
+			local light = game:GetService("Players").LocalPlayer.Backpack.Flashlight.Glow
+			light.SpotLight.Angle = 180
+			light.SpotLight.Brightness = 25
+			light.SpotLight.Range = 60
+			light.Beam.Width0 = 0
+			light.Beam.Width1 = 0
+		end)
+	end)
+end
+coroutine.wrap(brightFlash)()
+
 local home = win:Tab("Home")
 local esp = win:Tab("Esp")
 local misc = win:Tab("Misc")
