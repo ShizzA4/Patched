@@ -232,6 +232,56 @@ end
 coroutine.wrap(tableEsp)()
 end)
 
+misc:Button("pathfinder", function()
+
+local function pathToButton(button)
+    if button.Button.Color == game:GetService("ReplicatedStorage").Settings.ButtonOffColor.Value then return end
+    local PathfindingService = game:GetService("PathfindingService")
+    local path = PathfindingService:CreatePath({AgentRadius = 2, AgentHeight = 1})
+    path:ComputeAsync(game:GetService("Workspace").MapTable.PrimaryPart.Position + Vector3.new(0, 0, -15), button.Button.Position)
+    local waypoints = path:GetWaypoints()
+    local lastPart = nil
+    for _, waypoint in ipairs(waypoints) do
+        local currentPart = Instance.new("Part"); currentPart.Shape = "Ball"; currentPart.Material = "Neon"; currentPart.Size = Vector3.new(0.5, 0.5, 0.5); currentPart.Position = waypoint.Position + Vector3.new(0, 1, 0); currentPart.Anchored = true; currentPart.CanCollide = false; currentPart.Parent = game.Workspace
+        if lastPart ~= nil then
+            local attachment0 = Instance.new("Attachment"); attachment0.Parent = lastPart
+            local attachment1 = Instance.new("Attachment"); attachment1.Parent = currentPart
+            local beam = Instance.new("Beam"); beam.Parent = attachment0; beam.Attachment0 = attachment0; beam.Attachment1 = attachment1; beam.Width0 = 0.5; beam.Width1 = 0.5; beam.FaceCamera = true; beam.Enabled = true
+        end
+        lastPart = currentPart
+        local ColorChanged
+        local ChildRemoved
+        ColorChanged = button.Button:GetPropertyChangedSignal("Color"):Connect(function()
+            if button.Button.Color == game:GetService("ReplicatedStorage").Settings.ButtonOffColor.Value then
+                currentPart:Destroy()
+                ChildRemoved:Disconnect()
+                ColorChanged:Disconnect()
+            end
+        end)
+        ChildRemoved = game:GetService("Workspace").Tasks.ChildRemoved:Connect(function(child)
+            if child == button then
+                currentPart:Destroy()
+                ChildRemoved:Disconnect()
+                ColorChanged:Disconnect()
+            end
+        end)
+    end
+end
+
+function buttonPathfinder()
+    for _, button in pairs(game:GetService("Workspace").Tasks:GetChildren()) do
+        pathToButton(button)
+    end
+
+    game:GetService("Workspace").Tasks.ChildAdded:Connect(function(button)
+        task.wait(15)
+        pathToButton(button)
+    end)
+end
+coroutine.wrap(buttonPathfinder)()
+
+end)
+
 home:Label("Made By Shizza/Aaron")
 home:Label("Game: Minus Decendance")
 home:Label("Only 1 Dev Made this script")
