@@ -1,6 +1,27 @@
 local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/Vape.txt")()
 local win = lib:Window("Minus Decendance | 2023 ðŸ”¥",Color3.fromRGB(44, 120, 224), Enum.KeyCode.RightControl)
 
+function mapEnable()
+	game:GetService("RunService").Heartbeat:Connect(function()
+		game:GetService("Workspace").MapTable.MapScreen.SurfaceGui.Enabled = true
+	end)
+end
+coroutine.wrap(mapEnable)()
+
+game:GetService("Players").LocalPlayer.Character.Wrath:Destroy()
+
+function clipboardAutoCollect()
+    for _,clipboard in pairs(game:GetService("Workspace").Info:GetChildren()) do
+        fireclickdetector(clipboard.Hitbox.ClickDetector, 1)
+    end
+
+    game:GetService("Workspace").Info.ChildAdded:Connect(function(clipboard)
+        wait(15)
+        fireclickdetector(clipboard.Hitbox.ClickDetector, 1)
+    end)
+end
+coroutine.wrap(clipboardAutoCollect)()
+
 local home = win:Tab("Home")
 local esp = win:Tab("Esp")
 local misc = win:Tab("Misc")
